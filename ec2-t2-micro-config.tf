@@ -1,26 +1,21 @@
-# Find latest Amazon Linux 2 AMI
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
+# Get default VPC (if you don't have one already)
+data "aws_vpc" "default" {
+  default = true
+}
 
+# Get default subnet in the first availability zone
+data "aws_subnets" "default" {
   filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
   }
 }
 
-# Create EC2 instance using the found AMI
+# Create EC2 instance in the default subnet
 resource "aws_instance" "budget_test" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
-  
-  # This is required because EC2 instances need a subnet
-  subnet_id     = aws_vpc.main.subnet_ids[0]  # Use an existing subnet from your VPC
+  subnet_id     = tolist(data.aws_subnets.default.ids)[0]
   
   tags = {
     Name = "BudgetTestInstance"

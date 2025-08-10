@@ -1,7 +1,5 @@
-# Add this to your OpenTofu configuration
-
 resource "aws_instance" "budget_test" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI (adjust for your region)
+  ami           = "ami-0230bd60aa48260c6"  # Amazon Linux 2023 AMI in us-east-1
   instance_type = "t2.micro"
   
   tags = {
